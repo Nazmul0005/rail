@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Item Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px 0;
+        }
+        #items {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Item Manager</h1>
+    
+    <div id="create-item">
+        <h2>Create New Item</h2>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" id="description">
+        </div>
+        <div class="form-group">
+            <label for="price">Price:</label>
+            <input type="number" id="price" step="0.01" required>
+        </div>
+        <button onclick="createItem()">Create Item</button>
+    </div>
+
+    <div id="get-item">
+        <h2>Get Item by ID</h2>
+        <div class="form-group">
+            <label for="itemId">Item ID:</label>
+            <input type="number" id="itemId">
+            <button onclick="getItem()">Get Item</button>
+        </div>
+    </div>
+
+    <div id="items">
+        <h2>Results</h2>
+        <pre id="result"></pre>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1:8000';
+        
+        async function createItem() {
+            const item = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                price: parseFloat(document.getElementById('price').value)
+            };
+
+            try {
+                const response = await fetch(`${BASE_URL}/items/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(item)
+                });
+                const data = await response.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function getItem() {
+            const id = document.getElementById('itemId').value;
+            try {
+                const response = await fetch(`${BASE_URL}/items/${id}`);
+                const data = await response.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
