@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional
+import os
+import uvicorn  # required to run FastAPI in production
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -42,3 +44,8 @@ async def create_item(item: Item):
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
+
+# 👇 This is the important part for Railway
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
